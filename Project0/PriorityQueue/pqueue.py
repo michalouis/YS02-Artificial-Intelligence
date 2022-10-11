@@ -1,7 +1,7 @@
 from heapq import heappop, heappush
 
 
-class pq:
+class PriorityQueue:
 
     def __init__(self):
         """
@@ -15,7 +15,7 @@ class pq:
         """
         
         """
-        for pqItem in self:
+        for pqItem in self.heap:
             if pqItem == item:
                 return True
 
@@ -26,11 +26,11 @@ class pq:
         
         """
 
-        if self.isItem(self, (priority, item)):
+        if self.isItem([priority, item]):
             print("Item is already in PriorityQueue")
             return
 
-        heappush(self, (priority, item))
+        heappush(self.heap, [priority, item])
         self.count += 1
 
     def pop(self):
@@ -38,8 +38,9 @@ class pq:
         
         """
 
-        heappop(self)
         self.count -= 1
+        item = heappop(self.heap)
+        return item[1]
 
     def isEmpty(self):
         """
@@ -57,12 +58,16 @@ class pq:
         """
 
         if not self.isItem(self, item):
-            heappush(self, item)
+            heappush(self.heap, [priority, item])
+            self.count += 1
         else:
-            for pqItemPriority, pqItem in self:
+            for pqItemPriority, pqItem in self.heap:
                 if pqItem == item:
                     if pqItemPriority <= priority:
                         print("Item did not update")
                         return
                     else:
                         pqItemPriority = priority
+
+if __name__ == '__main__':
+    q = PriorityQueue()
