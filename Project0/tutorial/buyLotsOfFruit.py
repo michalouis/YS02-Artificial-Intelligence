@@ -36,11 +36,11 @@ def buyLotsOfFruit(orderList):
     """
     totalCost = 0.0
     for fruit, numPounds in orderList:
-        if fruit in fruitPrices:
-            totalCost += numPounds * fruitPrices[fruit]
-        else:
+        if fruit not in fruitPrices:
             print("An item in your order list can't be purchased")
             return None
+        else:
+            totalCost += numPounds * fruitPrices[fruit]
 
     return totalCost
 
