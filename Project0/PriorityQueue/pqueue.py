@@ -58,15 +58,15 @@ class PriorityQueue:
 
     def removeDuplicates(self):
         foundOnce = False
-        templist = []
+        list = []
         for pqItem in self.heap:
-            if pqItem not in templist:
-                templist.append(pqItem)
+            if pqItem not in list:
+                list.append(pqItem)
             else:
                 self.count -= 1
             
-        heapify(templist)
-        return templist
+        heapify(list)
+        return list
 
     def update(self, item, priority):
         """
@@ -86,6 +86,22 @@ class PriorityQueue:
 
         self.count += 1
         heappush(self.heap, [priority, item])
+
+def PQSort(list):
+    """
+    
+    """
+
+    pq = PriorityQueue()
+    for itemN in range(len(list)):
+        item = list.pop()
+        pq.push(item, item)
+
+    for itemN in range(pq.count):
+        list.append(pq.pop())
+
+    return None
+
 
 if __name__ == '__main__':
     q = PriorityQueue()
