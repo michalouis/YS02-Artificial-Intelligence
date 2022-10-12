@@ -62,6 +62,8 @@ class PriorityQueue:
         for pqItem in self.heap:
             if pqItem not in templist:
                 templist.append(pqItem)
+            else:
+                self.count -= 1
             
         heapify(templist)
         return templist
