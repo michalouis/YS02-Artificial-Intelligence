@@ -1,4 +1,4 @@
-from heapq import heappop, heappush
+from heapq import heapify, heappop, heappush
 
 
 class PriorityQueue:
@@ -56,31 +56,31 @@ class PriorityQueue:
         else:
             return True
 
+    def removeDuplicates(self):
+        foundOnce = False
+        templist = []
+        for pqItem in self.heap:
+            if pqItem not in templist:
+                templist.append(pqItem)
+            
+        heapify(templist)
+        return templist
+
     def update(self, item, priority):
         """
         
         """
 
-        # if not self.isItem([priority, item]):
-        #     heappush(self.heap, [priority, item])
-        #     self.count += 1
-        # else:
-        #     for pqItemPriority, pqItem in self.heap:
-        #         if pqItem == item:
-        #             if pqItemPriority <= priority:
-        #                 print("Item did not update")
-        #                 return None
-        #             else:
-        #                 pqItemPriority = priority
-
+        updated = False
         for pqItem in self.heap:
             if pqItem[1] == item:
-                if pqItem[0] <= priority:
-                    print("Item did not update")
-                    return None
-                else:
+                if pqItem[0] > priority:
                     pqItem[0] = priority
-                    return None
+                    updated = True
+
+        if updated:
+            self.heap = self.removeDuplicates()
+            return None
 
         self.count += 1
         heappush(self.heap, [priority, item])
