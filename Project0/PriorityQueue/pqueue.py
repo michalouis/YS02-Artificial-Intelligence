@@ -27,7 +27,6 @@ class PriorityQueue:
         """
 
         if self.isItem([priority, item]):
-            print("Item is already in PriorityQueue")
             return None
 
         self.count += 1
