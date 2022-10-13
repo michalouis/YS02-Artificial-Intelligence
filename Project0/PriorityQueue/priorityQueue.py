@@ -29,7 +29,7 @@ class PriorityQueue:
         """
 
         if self.isItem([priority, item]):
-            return None
+            return
 
         self.count += 1
         heappush(self.heap, [priority, item])
@@ -98,7 +98,7 @@ class PriorityQueue:
         # check for duplicates
         if updated:
             self.heap = self.removeDuplicates()
-            return None
+            return
 
         # if no items were updated add item to the pq 
         self.count += 1
@@ -121,7 +121,7 @@ def PQSort(list):
     for itemN in range(pq.count):
         list.append(pq.pop())
 
-    return None
+    return
 
 
 if __name__ == '__main__':
