@@ -57,7 +57,10 @@ class PriorityQueue:
             return True
 
     def removeDuplicates(self):
-        foundOnce = False
+        """
+
+        """
+
         list = []
         for pqItem in self.heap:
             if pqItem not in list:
@@ -65,7 +68,6 @@ class PriorityQueue:
             else:
                 self.count -= 1
             
-        heapify(list)
         return list
 
     def update(self, item, priority):
