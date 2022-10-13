@@ -106,3 +106,10 @@ def PQSort(list):
 
 if __name__ == '__main__':
     q = PriorityQueue()
+
+    
+
+    list = [1, 3, 5, 8, 2, 4, 4, 6, 6, 6, 9, 7]
+    print("Before PQsort: %s" % list)
+    PQSort(list)
+    print("After PQsort: %s" % list)
