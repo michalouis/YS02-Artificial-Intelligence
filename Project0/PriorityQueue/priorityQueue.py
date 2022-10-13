@@ -5,15 +5,16 @@ class PriorityQueue:
 
     def __init__(self):
         """
-    
-        
+        Initialize priorityQueue by creating
+        an empty heap and setting its counter to 0
         """
         self.heap = []
         self.count = 0
     
     def isItem(self, item):
         """
-        
+        if item is in priorityQueue return True
+        else return False
         """
         for pqItem in self.heap:
             if pqItem == item:
@@ -23,7 +24,8 @@ class PriorityQueue:
 
     def push(self, item, priority):
         """
-        
+        If item isn't already in pq's heap
+        insert it and increase pq's couunter by 1
         """
 
         if self.isItem([priority, item]):
@@ -34,7 +36,8 @@ class PriorityQueue:
 
     def pop(self):
         """
-        
+        If heap isn't empty return item and
+        decrease pq's counter by 1
         """
 
         if self.count == 0:
@@ -47,7 +50,8 @@ class PriorityQueue:
 
     def isEmpty(self):
         """
-        
+        If pq's heap is empty return
+        True else return False
         """
 
         if self.count != 0:
@@ -57,7 +61,11 @@ class PriorityQueue:
 
     def removeDuplicates(self):
         """
-
+        Add to an empty list pq's items
+        only once and then return list
+        
+        Note: items with identical content but
+        different priority are different items
         """
 
         list = []
@@ -65,15 +73,21 @@ class PriorityQueue:
             if pqItem not in list:
                 list.append(pqItem)
             else:
+                # if you find a duplicate decrease pq's counter
                 self.count -= 1
             
         return list
 
     def update(self, item, priority):
         """
-        
+        Update items' priority only if
+        the new priority is smaller than
+        the current one, then delete duplicate items
+
+        If no items were updated add the item to the pq
         """
 
+        # update items
         updated = False
         for pqItem in self.heap:
             if pqItem[1] == item:
@@ -81,16 +95,22 @@ class PriorityQueue:
                     pqItem[0] = priority
                     updated = True
 
+        # check for duplicates
         if updated:
             self.heap = self.removeDuplicates()
             return None
 
+        # if no items were updated add item to the pq 
         self.count += 1
         heappush(self.heap, [priority, item])
 
 def PQSort(list):
     """
-    
+    Put list's items in a pq using the class we just created
+    Items are now sorted from small to big inside the pq
+    Transfer items from pq back to the list
+
+    List is now sorted because pq pops items from small to big
     """
 
     pq = PriorityQueue()
