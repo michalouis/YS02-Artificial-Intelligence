@@ -17,6 +17,7 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
+from util import Queue
 from util import Stack
 import util
 
@@ -92,6 +93,7 @@ def depthFirstSearch(problem: SearchProblem):
     node = (problem.getStartState(), path)
     frontier.push(node)
     explored = []
+    toBeExplored = []
     while True:
         if frontier.isEmpty():
             return []
@@ -103,17 +105,44 @@ def depthFirstSearch(problem: SearchProblem):
 
         possibleSuccessors = problem.getSuccessors(node[0])
         for successor in possibleSuccessors:
-            if successor[0] not in explored:
+            if successor[0] not in explored and successor[0] not in toBeExplored:
+                toBeExplored.append(successor[0])
                 successorPath = node[1].copy()
                 successorPath.append(successor[1])
                 successorNode = (successor[0], successorPath)
                 frontier.push(successorNode)
+        toBeExplored.pop(0)
         
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    frontier = Queue()
+    path = []
+    node = (problem.getStartState(), path)
+    frontier.push(node)
+    explored = []
+    toBeExplored = []
+    while True:
+        if frontier.isEmpty():
+            return []
+        node = (frontier.pop())
+
+        if problem.isGoalState(node[0]):
+            return node[1]
+        explored.append(node[0])
+
+        possibleSuccessors = problem.getSuccessors(node[0])
+        for successor in possibleSuccessors:
+            if successor[0] not in explored and successor[0] not in toBeExplored:
+                toBeExplored.append(successor[0])
+                successorPath = node[1].copy()
+                successorPath.append(successor[1])
+                successorNode = (successor[0], successorPath)
+                frontier.push(successorNode)
+        toBeExplored.pop(0)
+
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
