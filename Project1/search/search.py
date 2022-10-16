@@ -17,6 +17,7 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
+from util import PriorityQueue
 from util import Queue
 from util import Stack
 import util
@@ -93,7 +94,6 @@ def depthFirstSearch(problem: SearchProblem):
     node = (problem.getStartState(), path)
     frontier.push(node)
     explored = []
-    toBeExplored = []
     while True:
         if frontier.isEmpty():
             return []
@@ -105,13 +105,11 @@ def depthFirstSearch(problem: SearchProblem):
 
         possibleSuccessors = problem.getSuccessors(node[0])
         for successor in possibleSuccessors:
-            if successor[0] not in explored and successor[0] not in toBeExplored:
-                toBeExplored.append(successor[0])
+            if successor[0] not in explored:
                 successorPath = node[1].copy()
                 successorPath.append(successor[1])
                 successorNode = (successor[0], successorPath)
                 frontier.push(successorNode)
-        toBeExplored.pop(0)
         
     util.raiseNotDefined()
 
@@ -148,6 +146,43 @@ def breadthFirstSearch(problem: SearchProblem):
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    frontier = PriorityQueue()
+    path = []
+    node = (problem.getStartState(), path, 0)
+    frontier.push(node, node[2])
+    explored = []
+    toBeExplored = []
+    while True:
+        if frontier.isEmpty():
+            return []
+
+        while node[0] in explored:
+            node = (frontier.pop())
+
+        if problem.isGoalState(node[0]):
+            return node[1]
+        explored.append(node[0])
+
+        possibleSuccessors = problem.getSuccessors(node[0])
+        for successor in possibleSuccessors:
+            if successor[0] not in explored and successor[0] not in toBeExplored:
+                toBeExplored.append(successor[0])
+                successorPath = node[1].copy()
+                successorPath.append(successor[1])
+                successorPathCost = node[2]
+                successorPathCost += successor[2]
+                successorNode = (successor[0], successorPath, successorPathCost)
+                frontier.push(successorNode, successorNode[2])
+            elif successor[0] in toBeExplored:
+                successorPath = node[1].copy()
+                successorPath.append(successor[1])
+                successorPathCost = node[2]
+                successorPathCost += successor[2]
+                successorNode = (successor[0], successorPath, successorPathCost)
+                frontier.update(successorNode, successorNode[2])
+        if len(toBeExplored) != 0:
+            toBeExplored.pop(0)
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
