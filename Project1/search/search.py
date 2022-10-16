@@ -20,7 +20,8 @@ Pacman agents (in searchAgents.py).
 from util import PriorityQueue
 from util import Queue
 from util import Stack
-import util
+# import util
+# from searchAgents import manhattanHeuristic
 
 class SearchProblem:
     """
@@ -179,7 +180,7 @@ def uniformCostSearch(problem: SearchProblem):
                 successorPathCost = node[2]
                 successorPathCost += successor[2]
                 successorNode = (successor[0], successorPath, successorPathCost)
-                frontier.update(successorNode, successorNode[2])
+                frontier.push(successorNode, successorNode[2])
         if len(toBeExplored) != 0:
             toBeExplored.pop(0)
 
@@ -195,6 +196,47 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    frontier = PriorityQueue()
+    path = []
+    node = (problem.getStartState(), path, 0, 0)
+    frontier.push(node, node[3])
+    explored = []
+    toBeExplored = []
+    while True:
+        if frontier.isEmpty():
+            return []
+
+        while node[0] in explored:
+            node = (frontier.pop())
+
+        if problem.isGoalState(node[0]):
+            return node[1]
+        explored.append(node[0])
+
+        possibleSuccessors = problem.getSuccessors(node[0])
+        for successor in possibleSuccessors:
+            if successor[0] not in explored and successor[0] not in toBeExplored:
+                toBeExplored.append(successor[0])
+                successorPath = node[1].copy()
+                successorPath.append(successor[1])
+                successorPathCost = node[2]
+                successorPathCost += successor[2]
+                heuristicValue = heuristic(successor[0], problem)
+                successorAstarCost = successorPathCost + heuristicValue
+                successorNode = (successor[0], successorPath, successorPathCost, successorAstarCost)
+                frontier.push(successorNode, successorNode[3])
+            elif successor[0] in toBeExplored:
+                successorPath = node[1].copy()
+                successorPath.append(successor[1])
+                successorPathCost = node[2]
+                successorPathCost += successor[2]
+                heuristicValue = heuristic(successor[0], problem)
+                successorAstarCost = successorPathCost + heuristicValue
+                successorNode = (successor[0], successorPath, successorPathCost, successorAstarCost)
+                frontier.push(successorNode, successorNode[3])
+        if len(toBeExplored) != 0:
+            toBeExplored.pop(0)
+
     util.raiseNotDefined()
 
 
