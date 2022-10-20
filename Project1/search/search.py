@@ -90,12 +90,6 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
 
-    """
-        > path contains List to store final sequence of directions 
-        > explored contains states we have already visited
-        > toBeExplored contains states that have been placed 
-        in the Queue and are waiting to be explored
-    """
     path = []           # list to store sequence of directions 
     explored = []       # list with states we have already visited
     frontier = Stack()
@@ -119,12 +113,6 @@ def depthFirstSearch(problem: SearchProblem):
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
 
-    """
-        > path contains List to store final sequence of directions 
-        > explored contains states we have already visited
-        > toBeExplored contains states that have been placed 
-        in the Queue and are waiting to be explored
-    """
     path = []           # list to store sequence of directions 
     explored = []       # list with states we have already visited
     toBeExplored = []   # list with states that have been placed in
@@ -154,16 +142,10 @@ def breadthFirstSearch(problem: SearchProblem):
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
 
-    """
-        > path contains List to store final sequence of directions 
-        > explored contains states we have already visited
-        > toBeExplored contains states that have been placed 
-        in the Queue and are waiting to be explored
-    """
     path = []           # list to store sequence of directions 
     explored = []       # list with states we have already visited
     toBeExplored = []   # list with states that have been placed in
-                        # the Queue and are waiting to be explored
+                        # the PQueue and are waiting to be explored
     frontier = PriorityQueue()
     frontier.push((problem.getStartState(), path, 0), 0)
     while True:
@@ -203,16 +185,11 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    """
-        > path contains List to store final sequence of directions 
-        > explored contains states we have already visited
-        > toBeExplored contains states that have been placed 
-        in the Queue and are waiting to be explored
-    """
+
     path = []           # list to store sequence of directions 
     explored = []       # list with states we have already visited
     toBeExplored = []   # list with states that have been placed in
-                        # the Queue and are waiting to be explored
+                        # the PQueue and are waiting to be explored
     frontier = PriorityQueue()
     frontier.push((problem.getStartState(), path, 0, 0), 0)
     while True:
