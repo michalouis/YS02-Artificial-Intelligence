@@ -179,7 +179,6 @@ def uniformCostSearch(problem: SearchProblem):
             return node[1]
 
         explored.append(node[0])
-
         successors = problem.getSuccessors(node[0])
         for child, path, cost in successors:
             successorPath = node[1].copy()
@@ -204,45 +203,44 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
+    """
+        > path contains List to store final sequence of directions 
+        > explored contains states we have already visited
+        > toBeExplored contains states that have been placed 
+        in the Queue and are waiting to be explored
+    """
+    path = []           # list to store sequence of directions 
+    explored = []       # list with states we have already visited
+    toBeExplored = []   # list with states that have been placed in
+                        # the Queue and are waiting to be explored
     frontier = PriorityQueue()
-    path = []
-    node = (problem.getStartState(), path, 0, 0)
-    frontier.push(node, node[3])
-    explored = []
-    toBeExplored = []
+    frontier.push((problem.getStartState(), path, 0, 0), 0)
     while True:
         if frontier.isEmpty():
             return []
 
-        while node[0] in explored:
+        while True:
             node = (frontier.pop())
+            if node[0] not in explored:
+                break
 
         if problem.isGoalState(node[0]):
             return node[1]
-        explored.append(node[0])
 
-        possibleSuccessors = problem.getSuccessors(node[0])
-        for successor in possibleSuccessors:
-            if successor[0] not in explored and successor[0] not in toBeExplored:
-                toBeExplored.append(successor[0])
-                successorPath = node[1].copy()
-                successorPath.append(successor[1])
-                successorPathCost = node[2]
-                successorPathCost += successor[2]
-                heuristicValue = heuristic(successor[0], problem)
-                successorAstarCost = successorPathCost + heuristicValue
-                successorNode = (successor[0], successorPath, successorPathCost, successorAstarCost)
-                frontier.push(successorNode, successorNode[3])
-            elif successor[0] in toBeExplored:
-                successorPath = node[1].copy()
-                successorPath.append(successor[1])
-                successorPathCost = node[2]
-                successorPathCost += successor[2]
-                heuristicValue = heuristic(successor[0], problem)
-                successorAstarCost = successorPathCost + heuristicValue
-                successorNode = (successor[0], successorPath, successorPathCost, successorAstarCost)
-                frontier.push(successorNode, successorNode[3])
+        explored.append(node[0])
+        successors = problem.getSuccessors(node[0])
+        for child, path, cost in successors:
+            successorPath = node[1].copy()
+            successorPath.append(path)
+            successorPathCost = node[2]
+            successorPathCost += cost
+            heuristicValue = heuristic(child, problem)
+            successorAstarCost = successorPathCost + heuristicValue
+            if child not in explored and child not in toBeExplored:
+                toBeExplored.append(child)
+                frontier.push((child, successorPath, successorPathCost, successorAstarCost), successorAstarCost)
+            elif child in toBeExplored:
+                frontier.push((child, successorPath, successorPathCost, successorAstarCost), successorAstarCost)
         if len(toBeExplored) != 0:
             toBeExplored.pop(0)
 
