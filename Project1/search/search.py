@@ -89,27 +89,32 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
+
+    """
+        > path contains List to store final sequence of directions 
+        > explored contains states we have already visited
+        > toBeExplored contains states that have been placed 
+        in the Queue and are waiting to be explored
+    """
+    path = []           # list to store sequence of directions 
+    explored = []       # list with states we have already visited
     frontier = Stack()
-    path = []
-    node = (problem.getStartState(), path)
-    frontier.push(node)
-    explored = []
+    frontier.push((problem.getStartState(), path))
     while True:
         if frontier.isEmpty():
             return []
-        node = (frontier.pop())
 
+        node = (frontier.pop())     # node = (state, path)
         if problem.isGoalState(node[0]):
             return node[1]
-        explored.append(node[0])
 
-        possibleSuccessors = problem.getSuccessors(node[0])
-        for successor in possibleSuccessors:
-            if successor[0] not in explored:
-                successorPath = node[1].copy()
-                successorPath.append(successor[1])
-                successorNode = (successor[0], successorPath)
-                frontier.push(successorNode)
+        explored.append(node[0])
+        successors = problem.getSuccessors(node[0])
+        for child, direction, cost in successors:
+            if child not in explored:
+                childPath = node[1].copy()
+                childPath.append(direction)
+                frontier.push((child, childPath))
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
