@@ -153,7 +153,7 @@ def uniformCostSearch(problem: SearchProblem):
             return []
 
         while True:
-            node = (frontier.pop())
+            node = (frontier.pop())     # node = (state, path, cost)
             if node[0] not in explored:
                 break
 
@@ -169,9 +169,11 @@ def uniformCostSearch(problem: SearchProblem):
             successorPathCost += cost
             if child not in explored and child not in toBeExplored:
                 toBeExplored.append(child)
-                frontier.push((child, successorPath, successorPathCost), successorPathCost)
+                toPushNode = (child, successorPath, successorPathCost)
+                frontier.push(toPushNode, toPushNode[2])
             elif child in toBeExplored:
-                frontier.push((child, successorPath, successorPathCost), successorPathCost)
+                toPushNode = (child, successorPath, successorPathCost)
+                frontier.push(toPushNode, toPushNode[2])
 
         if len(toBeExplored) != 0:
             toBeExplored.pop(0)
@@ -197,7 +199,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
             return []
 
         while True:
-            node = (frontier.pop())
+            node = (frontier.pop())     # node = (state, path, cost, A*Cost)
             if node[0] not in explored:
                 break
 
@@ -215,9 +217,11 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
             successorAstarCost = successorPathCost + heuristicValue
             if child not in explored and child not in toBeExplored:
                 toBeExplored.append(child)
-                frontier.push((child, successorPath, successorPathCost, successorAstarCost), successorAstarCost)
+                toPushNode = (child, successorPath, successorPathCost, successorAstarCost)
+                frontier.push(toPushNode, toPushNode[3])
             elif child in toBeExplored:
-                frontier.push((child, successorPath, successorPathCost, successorAstarCost), successorAstarCost)
+                toPushNode = (child, successorPath, successorPathCost, successorAstarCost)
+                frontier.push(toPushNode, toPushNode[3])
         if len(toBeExplored) != 0:
             toBeExplored.pop(0)
 
