@@ -160,7 +160,6 @@ def uniformCostSearch(problem: SearchProblem):
         > toBeExplored contains states that have been placed 
         in the Queue and are waiting to be explored
     """
-    aFuckingDic = {}
     path = []           # list to store sequence of directions 
     explored = []       # list with states we have already visited
     toBeExplored = []   # list with states that have been placed in
