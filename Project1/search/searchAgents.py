@@ -293,19 +293,49 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
 
+
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
+
+        """
+        Along with the starting position we also return an list.
+        This list is empty right now but if we pass a corner, we
+        add it this list.
+
+        This also allows us to visit nodes we have visited before,
+        because we may need to retrace some of the steps we have taken
+        if we want to get from one corner to another.
+
+        e.g.
+        ((x, y), [empty list]) =/= ((x, y), [corner1]) =/= ((x, y), [corner1, corner 2])
+        """
+
+        return (self.startingPosition, [])
+
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
+        
+        currPosition = state[0]
+        visitedCorners = state[1]
+
+        # If currentPosition is a corner, add it to the visitedCorners list
+        if currPosition in self.corners:
+            if currPosition not in visitedCorners:
+                visitedCorners.append(currPosition)
+        
+        # if we visited all corners, return True
+        if len(visitedCorners) == 4:
+            return True
+        else:
+            return False
+            
         util.raiseNotDefined()
 
     def getSuccessors(self, state: Any):
@@ -328,7 +358,15 @@ class CornersProblem(search.SearchProblem):
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
 
-            "*** YOUR CODE HERE ***"
+            x,y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            
+            if not hitsWall:
+                # create a new list for the succesor using the current state's list
+                succesorVisitedCorners = state[1].copy()
+                successors.append((((nextx, nexty), succesorVisitedCorners), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors

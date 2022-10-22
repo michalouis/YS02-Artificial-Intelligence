@@ -137,7 +137,8 @@ def breadthFirstSearch(problem: SearchProblem):
                 frontier.push((child, childPath))
 
         # removes state we just visited from toBeExplored list
-        toBeExplored.pop(0)
+        if len(toBeExplored) != 0:
+            toBeExplored.pop(0)
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
