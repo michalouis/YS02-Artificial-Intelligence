@@ -293,6 +293,7 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
 
+        self.startingGameState = startingGameState
 
     def getStartState(self):
         """
@@ -365,8 +366,12 @@ class CornersProblem(search.SearchProblem):
             
             if not hitsWall:
                 # create a new list for the succesor using the current state's list
-                succesorVisitedCorners = state[1].copy()
-                successors.append((((nextx, nexty), succesorVisitedCorners), action, 1))
+                successorVisitedCorners = state[1].copy()
+                if state[0] in self.corners:
+                    if state[0] not in successorVisitedCorners:
+                        successorVisitedCorners.append(state[0])
+
+                successors.append((((nextx, nexty), successorVisitedCorners), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -402,6 +407,24 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+
+    notVisitedCorners = []
+    for corner in problem.corners:
+        if corner not in state[1]:
+            notVisitedCorners.append(corner)
+
+    if not notVisitedCorners:
+        return 0
+
+    cornerDistances = []
+    for corner in notVisitedCorners:
+        # heuristic = util.manhattanDistance(state[0], corner)
+        heuristic = mazeDistance(state[0], corner, problem.startingGameState)
+        cornerDistances.append(heuristic)
+
+    return max(cornerDistances)
+
+
     return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
