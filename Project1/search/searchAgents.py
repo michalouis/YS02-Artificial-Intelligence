@@ -34,6 +34,7 @@ description for details.
 Good luck and happy searching!
 """
 
+from turtle import position
 from typing import List, Tuple, Any
 from game import Directions
 from game import Agent
@@ -302,19 +303,26 @@ class CornersProblem(search.SearchProblem):
         """
 
         """
-        Along with the starting position we also return an list.
-        This list is empty right now but if we pass a corner, we
-        add it this list.
+        Along with the starting position we also return an tuple.
+        This tuple is empty right now but if we pass a corner, we
+        add it to the tuple (see getSuccessors).
 
         This also allows us to visit nodes we have visited before,
         because we may need to retrace some of the steps we have taken
         if we want to get from one corner to another.
 
         e.g.
-        ((x, y), [empty list]) =/= ((x, y), [corner1]) =/= ((x, y), [corner1, corner 2])
+        ((x, y), (empty tuple)) =/= ((x, y), (corner1)) =/= ((x, y), (corner1, corner 2))
         """
+        position = self.startingPosition
 
-        return (self.startingPosition, [])
+        # if we start on a corner, add corner to tuple
+        if position in self.corners:
+            visitedCorners = (position)
+        else:
+            visitedCorners = ()
+
+        return (position, visitedCorners)
 
         util.raiseNotDefined()
 
@@ -323,15 +331,9 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         
-        currPosition = state[0]
         visitedCorners = state[1]
 
-        # If currentPosition is a corner, add it to the visitedCorners list
-        if currPosition in self.corners:
-            if currPosition not in visitedCorners:
-                visitedCorners.append(currPosition)
-        
-        # if we visited all corners, return True
+        # if we visited all 4 corners this state is a goal state
         if len(visitedCorners) == 4:
             return True
         else:
@@ -365,13 +367,12 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
             
             if not hitsWall:
-                # create a new list for the succesor using the current state's list
-                successorVisitedCorners = state[1].copy()
-                if state[0] in self.corners:
-                    if state[0] not in successorVisitedCorners:
-                        successorVisitedCorners.append(state[0])
+                visitedCorners = list(state[1])
+                if (nextx, nexty) in self.corners:
+                    if (nextx, nexty) not in visitedCorners:
+                        visitedCorners.append((nextx, nexty))
 
-                successors.append((((nextx, nexty), successorVisitedCorners), action, 1))
+                successors.append((((nextx, nexty), tuple(visitedCorners)), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
