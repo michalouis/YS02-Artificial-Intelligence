@@ -367,7 +367,8 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
             
             if not hitsWall:
-                visitedCorners = list(state[1])
+                # update visitedCorners, if needed
+                visitedCorners = list(state[1])     # turn tuple to list so we can update it
                 if (nextx, nexty) in self.corners:
                     if (nextx, nexty) not in visitedCorners:
                         visitedCorners.append((nextx, nexty))

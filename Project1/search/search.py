@@ -91,7 +91,7 @@ def depthFirstSearch(problem: SearchProblem):
     """
 
     path = []           # list to store sequence of directions 
-    explored = set()    # list with states we have already visited
+    explored = set()    # set with states we have already visited
     frontier = Stack()
     frontier.push((problem.getStartState(), path))
     while True:
@@ -114,7 +114,7 @@ def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
 
     path = []           # list to store sequence of directions 
-    explored = set()    # list with states we have already visited
+    explored = set()    # set with states we have already visited
     toBeExplored = []   # list with states that have been placed in
                         # the Queue and are waiting to be explored
     frontier = Queue()
@@ -144,7 +144,7 @@ def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
 
     path = []           # list to store sequence of directions 
-    explored = set()    # list with states we have already visited
+    explored = set()    # set with states we have already visited
     toBeExplored = []   # list with states that have been placed in
                         # the PQueue and are waiting to be explored
     frontier = PriorityQueue()
@@ -190,7 +190,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
 
     path = []           # list to store sequence of directions 
-    explored = set()    # list with states we have already visited
+    explored = set()    # set with states we have already visited
     toBeExplored = []   # list with states that have been placed in
                         # the PQueue and are waiting to be explored
     frontier = PriorityQueue()
