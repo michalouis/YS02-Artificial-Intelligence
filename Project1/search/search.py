@@ -179,8 +179,6 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
 
     path = []           # list to store sequence of directions 
     explored = set()    # set with states we have already visited
-    toBeExplored = []   # list with states that have been placed in
-                        # the PQueue and are waiting to be explored
     frontier = PriorityQueue()
     frontier.push((problem.getStartState(), path, 0, 0), 0)
     while True:
@@ -204,15 +202,9 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
             successorPathCost += cost
             heuristicValue = heuristic(child, problem)
             successorAstarCost = successorPathCost + heuristicValue
-            if child not in explored and child not in toBeExplored:
-                toBeExplored.append(child)
+            if child not in explored:
                 toPushNode = (child, successorPath, successorPathCost, successorAstarCost)
                 frontier.push(toPushNode, toPushNode[3])
-            elif child in toBeExplored:
-                toPushNode = (child, successorPath, successorPathCost, successorAstarCost)
-                frontier.push(toPushNode, toPushNode[3])
-        if len(toBeExplored) != 0:
-            toBeExplored.pop(0)
 
 
 # Abbreviations
