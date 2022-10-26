@@ -115,30 +115,29 @@ def breadthFirstSearch(problem: SearchProblem):
 
     path = []           # list to store sequence of directions 
     explored = set()    # set with states we have already visited
-    toBeExplored = []   # list with states that have been placed in
-                        # the Queue and are waiting to be explored
+    # toBeExplored = []   # list with states that have been placed in
+    #                     # the Queue and are waiting to be explored
     frontier = Queue()
     frontier.push((problem.getStartState(), path))
     while True:
         if frontier.isEmpty():
             return []
 
-        node = (frontier.pop())     # node = (state, path)
+        while True:
+            node = (frontier.pop())     # node = (state, path)
+            if node[0] not in explored:
+                break
+
         if problem.isGoalState(node[0]):
             return node[1]
 
         explored.add(node[0])
         successors = problem.getSuccessors(node[0])
         for child, direction, cost in successors:
-            if child not in explored and child not in toBeExplored:
-                toBeExplored.append(child)
+            if child not in explored:
                 childPath = node[1].copy()
                 childPath.append(direction)
                 frontier.push((child, childPath))
-
-        # removes state we just visited from toBeExplored list
-        if len(toBeExplored) != 0:
-            toBeExplored.pop(0)
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
