@@ -115,8 +115,6 @@ def breadthFirstSearch(problem: SearchProblem):
 
     path = []           # list to store sequence of directions 
     explored = set()    # set with states we have already visited
-    # toBeExplored = []   # list with states that have been placed in
-    #                     # the Queue and are waiting to be explored
     frontier = Queue()
     frontier.push((problem.getStartState(), path))
     while True:
@@ -144,8 +142,6 @@ def uniformCostSearch(problem: SearchProblem):
 
     path = []           # list to store sequence of directions 
     explored = set()    # set with states we have already visited
-    toBeExplored = []   # list with states that have been placed in
-                        # the PQueue and are waiting to be explored
     frontier = PriorityQueue()
     frontier.push((problem.getStartState(), path, 0), 0)
     while True:
@@ -167,16 +163,9 @@ def uniformCostSearch(problem: SearchProblem):
             successorPath.append(path)
             successorPathCost = node[2]
             successorPathCost += cost
-            if child not in explored and child not in toBeExplored:
-                toBeExplored.append(child)
+            if child not in explored:
                 toPushNode = (child, successorPath, successorPathCost)
                 frontier.push(toPushNode, toPushNode[2])
-            elif child in toBeExplored:
-                toPushNode = (child, successorPath, successorPathCost)
-                frontier.push(toPushNode, toPushNode[2])
-
-        if len(toBeExplored) != 0:
-            toBeExplored.pop(0)
 
 def nullHeuristic(state, problem=None):
     """
