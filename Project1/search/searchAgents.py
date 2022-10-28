@@ -530,7 +530,6 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
     foodDistances = []
     for food in foodGridList:
-        # heuristic = heuristic = util.manhattanDistance(position, food)
         heuristic = mazeDistance(state[0], food, problem.startingGameState)
         foodDistances.append(heuristic)
 
