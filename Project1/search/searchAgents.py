@@ -420,7 +420,6 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
 
     cornerDistances = []
     for corner in notVisitedCorners:
-        # heuristic = util.manhattanDistance(state[0], corner)
         heuristic = mazeDistance(state[0], corner, problem.startingGameState)
         cornerDistances.append(heuristic)
 
