@@ -294,8 +294,6 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
 
-        self.startingGameState = startingGameState
-
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
@@ -307,7 +305,7 @@ class CornersProblem(search.SearchProblem):
         This tuple is empty right now but if we pass a corner, we
         add it to the tuple (see getSuccessors).
 
-        This also allows us to visit nodes we have visited before,
+        This also allows us to visit nodes we have explored before,
         because we may need to retrace some of the steps we have taken
         if we want to get from one corner to another.
 
@@ -318,11 +316,11 @@ class CornersProblem(search.SearchProblem):
 
         # if we start on a corner, add corner to tuple
         if position in self.corners:
-            visitedCorners = (position)
+            exploredCorners = (position)
         else:
-            visitedCorners = ()
+            exploredCorners = ()
 
-        return (position, visitedCorners)
+        return (position, exploredCorners)
 
         util.raiseNotDefined()
 
@@ -331,10 +329,10 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         
-        visitedCorners = state[1]
+        exploredCorners = state[1]
 
-        # if we visited all 4 corners this state is a goal state
-        if len(visitedCorners) == 4:
+        # if we explored all 4 corners this state is a goal state
+        if len(exploredCorners) == 4:
             return True
         else:
             return False
@@ -367,13 +365,13 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
             
             if not hitsWall:
-                # update visitedCorners, if needed
-                visitedCorners = list(state[1])     # turn tuple to list so we can update it
+                # update exploredCorners, if needed
+                exploredCorners = list(state[1])     # turn tuple to list so we can update it
                 if (nextx, nexty) in self.corners:
-                    if (nextx, nexty) not in visitedCorners:
-                        visitedCorners.append((nextx, nexty))
+                    if (nextx, nexty) not in exploredCorners:
+                        exploredCorners.append((nextx, nexty))
 
-                successors.append((((nextx, nexty), tuple(visitedCorners)), action, 1))
+                successors.append((((nextx, nexty), tuple(exploredCorners)), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -410,20 +408,24 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
 
     "*** YOUR CODE HERE ***"
 
-    notVisitedCorners = []
+    unexploredCorners = []
     for corner in problem.corners:
         if corner not in state[1]:
-            notVisitedCorners.append(corner)
+            unexploredCorners.append(corner)
 
-    if not notVisitedCorners:
-        return 0
+    heuristic = 0
+    currPosition = state[0]
+    while unexploredCorners:
+        distances = []
+        for corner in unexploredCorners:
+            distances.append((util.manhattanDistance(currPosition, corner), corner))
 
-    cornerDistances = []
-    for corner in notVisitedCorners:
-        heuristic = mazeDistance(state[0], corner, problem.startingGameState)
-        cornerDistances.append(heuristic)
+        distance, nearestCorner = min(distances)
+        heuristic += distance
+        currPosition = nearestCorner
+        unexploredCorners.remove(currPosition)
 
-    return max(cornerDistances)
+    return heuristic
 
 
     return 0 # Default to trivial solution
