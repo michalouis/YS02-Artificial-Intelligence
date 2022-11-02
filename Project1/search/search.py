@@ -17,9 +17,6 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
-from util import PriorityQueue
-from util import Queue
-from util import Stack
 import util
 
 class SearchProblem:
@@ -92,7 +89,7 @@ def depthFirstSearch(problem: SearchProblem):
 
     path = []           # list to store sequence of directions 
     explored = set()    # set with states we have already explored
-    frontier = Stack()
+    frontier = util.Stack()
     frontier.push((problem.getStartState(), path))
     while True:
         if frontier.isEmpty():
@@ -115,7 +112,7 @@ def breadthFirstSearch(problem: SearchProblem):
 
     path = []           # list to store sequence of directions 
     explored = set()    # set with states we have already explored
-    frontier = Queue()
+    frontier = util.Queue()
     frontier.push((problem.getStartState(), path))
     while True:
         if frontier.isEmpty():
@@ -142,7 +139,7 @@ def uniformCostSearch(problem: SearchProblem):
 
     path = []           # list to store sequence of directions 
     explored = set()    # set with states we have already explored
-    frontier = PriorityQueue()
+    frontier = util.PriorityQueue()
     frontier.push((problem.getStartState(), path, 0), 0)
     while True:
         if frontier.isEmpty():
@@ -179,7 +176,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
 
     path = []           # list to store sequence of directions 
     explored = set()    # set with states we have already explored
-    frontier = PriorityQueue()
+    frontier = util.PriorityQueue()
     frontier.push((problem.getStartState(), path, 0, 0), 0)
     while True:
         if frontier.isEmpty():
