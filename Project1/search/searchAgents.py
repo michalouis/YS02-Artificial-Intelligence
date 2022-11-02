@@ -408,11 +408,13 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
 
     "*** YOUR CODE HERE ***"
 
+    # create list of unexplored corners
     unexploredCorners = []
     for corner in problem.corners:
         if corner not in state[1]:
             unexploredCorners.append(corner)
 
+    # return minimum total distance from cuurent state to goal state
     heuristic = 0
     currPosition = state[0]
     while unexploredCorners:
@@ -523,17 +525,33 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
 
-    foodGridList =  foodGrid.asList()
+    foodGridList = foodGrid.asList()
 
     if not foodGridList:
         return 0
 
     foodDistances = []
     for food in foodGridList:
-        heuristic = mazeDistance(state[0], food, problem.startingGameState)
-        foodDistances.append(heuristic)
+        key = (position, food)
+        if key in problem.heuristicInfo:
+            distance = problem.heuristicInfo[key]
+        else:
+            # using manhattanDistance won't give us the best score
+            distance = mazeDistance(position, food, problem.startingGameState)
+            problem.heuristicInfo[key] = distance
+
+        foodDistances.append(distance)
 
     return max(foodDistances)
+
+    "This works too but it's slower because we don't store previously calculated distances"
+
+    # foodDistances = []
+    # for food in foodGridList:
+    #     heuristic = mazeDistance(state[0], food, problem.startingGameState)
+    #     foodDistances.append(heuristic)
+
+    # return max(foodDistances)
 
     return 0
 
