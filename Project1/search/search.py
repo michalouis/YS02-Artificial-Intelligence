@@ -208,8 +208,8 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
             heuristicValue = heuristic(child, problem)
             successorAstarCost = successorPathCost + heuristicValue
             if child not in explored:
-                successor_node = (child, successorPath, successorPathCost, successorAstarCost)
-                frontier.push(successor_node, successor_node[3])
+                successor_node = (child, successorPath, successorPathCost)
+                frontier.push(successor_node, successorAstarCost)
 
 
 # Abbreviations
