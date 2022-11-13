@@ -532,13 +532,14 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
     foodDistances = []
     for food in foodGridList:
+        # use key to search for the distance in the dictionary
         key = (position, food)
         if key in problem.heuristicInfo:
             distance = problem.heuristicInfo[key]
         else:
-            # using manhattanDistance won't give us the best score
-            distance = mazeDistance(position, food, problem.startingGameState)
-            problem.heuristicInfo[key] = distance
+            # using manhattanDistance won't give us the best score in the autograder
+            distance = mazeDistance(position, food, problem.startingGameState)  # if distance hasn't been calculated before, do it now
+            problem.heuristicInfo[key] = distance   # store distance, for fast access next time
 
         foodDistances.append(distance)
 
