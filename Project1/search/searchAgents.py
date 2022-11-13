@@ -414,7 +414,7 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
         if corner not in state[1]:
             unexploredCorners.append(corner)
 
-    # return minimum total distance from cuurent state to goal state
+    # return minimum total distance from current state to goal state
     heuristic = 0
     currPosition = state[0]
     while unexploredCorners:

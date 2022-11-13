@@ -99,7 +99,9 @@ def depthFirstSearch(problem: SearchProblem):
         if problem.isGoalState(node[0]):
             return node[1]
 
-        explored.add(node[0])
+        explored.add(node[0])   # node is now explored
+
+        # add unexplored successors to frontier
         successors = problem.getSuccessors(node[0])
         for child, direction, cost in successors:
             if child not in explored:
@@ -126,7 +128,9 @@ def breadthFirstSearch(problem: SearchProblem):
         if problem.isGoalState(node[0]):
             return node[1]
 
-        explored.add(node[0])
+        explored.add(node[0])   # node is now explored
+
+        # add unexplored successors to frontier
         successors = problem.getSuccessors(node[0])
         for child, direction, cost in successors:
             if child not in explored:
@@ -153,7 +157,9 @@ def uniformCostSearch(problem: SearchProblem):
         if problem.isGoalState(node[0]):
             return node[1]
 
-        explored.add(node[0])
+        explored.add(node[0])   # node is now explored
+
+        # add unexplored successors to frontier
         successors = problem.getSuccessors(node[0])
         for child, path, cost in successors:
             successorPath = node[1].copy()
@@ -161,8 +167,8 @@ def uniformCostSearch(problem: SearchProblem):
             successorPathCost = node[2]
             successorPathCost += cost
             if child not in explored:
-                toPushNode = (child, successorPath, successorPathCost)
-                frontier.push(toPushNode, toPushNode[2])
+                successor_node = (child, successorPath, successorPathCost)
+                frontier.push(successor_node, successor_node[2])
 
 def nullHeuristic(state, problem=None):
     """
@@ -190,7 +196,9 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
         if problem.isGoalState(node[0]):
             return node[1]
 
-        explored.add(node[0])
+        explored.add(node[0])   # node is now explored
+
+        # add unexplored successors to frontier
         successors = problem.getSuccessors(node[0])
         for child, path, cost in successors:
             successorPath = node[1].copy()
@@ -200,8 +208,8 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
             heuristicValue = heuristic(child, problem)
             successorAstarCost = successorPathCost + heuristicValue
             if child not in explored:
-                toPushNode = (child, successorPath, successorPathCost, successorAstarCost)
-                frontier.push(toPushNode, toPushNode[3])
+                successor_node = (child, successorPath, successorPathCost, successorAstarCost)
+                frontier.push(successor_node, successor_node[3])
 
 
 # Abbreviations
