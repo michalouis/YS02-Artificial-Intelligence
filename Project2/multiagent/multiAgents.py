@@ -208,12 +208,60 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     Your minimax agent with alpha-beta pruning (question 3)
     """
 
+    def minmax(self, gameState: GameState, agent: int, depth: int, alpha: float, beta: float):
+
+        if (gameState.isWin() or gameState.isLose() or depth == 0):
+            return (self.evaluationFunction(gameState),)
+
+        if agent == 0:
+            maxEval = float('-inf')
+            actionList = gameState.getLegalActions(agent)
+
+            for action in actionList:
+                successor = gameState.generateSuccessor(agent, action)
+                successorEval = self.minmax(successor, agent + 1, depth, alpha, beta)
+
+                if successorEval[0] > maxEval:
+                    maxEval = successorEval[0]
+                    bestAction = action
+
+                alpha = max(alpha, successorEval[0])
+                if beta < alpha:
+                    break
+
+            return (maxEval, bestAction)
+        else:
+            minEval = float('inf')
+            actionList = gameState.getLegalActions(agent)
+
+            if agent == gameState.getNumAgents() - 1:
+                depth -= 1
+                nextAgent = 0
+            else:
+                nextAgent = agent + 1
+
+            for action in actionList:
+                successor = gameState.generateSuccessor(agent, action)
+                successorEval = self.minmax(successor, nextAgent, depth, alpha, beta)
+
+                if successorEval[0] < minEval:
+                    minEval = successorEval[0]
+                    bestAction = action
+
+                beta = min(beta, successorEval[0])
+                if beta < alpha:
+                    break
+
+            return (minEval, bestAction)
+
     def getAction(self, gameState: GameState):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        action = self.minmax(gameState, self.index, self.depth, float('-inf'), float('inf'))
+        return action[1]
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
