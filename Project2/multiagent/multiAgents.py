@@ -338,13 +338,15 @@ def betterEvaluationFunction(currentGameState: GameState):
     foodDistance = [manhattanDistance(pos, food) for food in foodList]
 
     if foodDistance:
-        closestFoodScore = 1/float(min(foodDistance))
-        furthestFoodScore = 1/float(max(foodDistance))
+        closestFoodScore = 1/float(min(foodDistance) + 1)
+        furthestFoodScore = 1/float(max(foodDistance) + 1)
         
         if len(foodList) == 1:
             foodScore = closestFoodScore
         else:
             foodScore = closestFoodScore + furthestFoodScore
+
+    foodScore += 1/len(foodList)
 
     # ghost score
     ghostScore = 0
@@ -362,10 +364,10 @@ def betterEvaluationFunction(currentGameState: GameState):
 
     # capsule score
     capsuleScore = 0
-    if  ghostScaredTime > 0:
-        capsuleDistance = [manhattanDistance(pos, capsule) for capsule in currentGameState.getCapsules()]
-        if capsuleDistance:
-            capsuleScore = 1/float(min(capsuleDistance))
+    capsuleDistance = [manhattanDistance(pos, capsule) for capsule in currentGameState.getCapsules()]
+    if capsuleDistance:
+        capsuleScore = (1/float(min(capsuleDistance) + 1))
+        capsuleScore += 1/len(capsuleDistance)
 
     return currentGameState.getScore() + foodScore + ghostScore + capsuleScore
 
