@@ -101,6 +101,7 @@ class ReflexAgent(Agent):
             else:
                 closestGhostScore = -1/float(min(ghostDistance))
 
+        # if there is one food left, then closestFood = furthestFood
         if len(foodList) != 1:
             return successorGameState.getScore() + closestFoodScore + furthestFoodScore + closestGhostScore
         else:
@@ -355,6 +356,7 @@ def betterEvaluationFunction(currentGameState: GameState):
         closestFoodScore = 1/float(min(foodDistance) + 1)
         furthestFoodScore = 1/float(max(foodDistance) + 1)
         
+        # if there is one food left, then closestFood = furthestFood
         if len(foodList) == 1:
             foodScore = closestFoodScore
         else:
