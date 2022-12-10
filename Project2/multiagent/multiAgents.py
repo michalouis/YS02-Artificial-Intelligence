@@ -148,7 +148,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         if (gameState.isWin() or gameState.isLose() or depth == 0):
             return (self.evaluationFunction(gameState),)
 
-        # pacman is max player
+        # pacman is maximazer
         if agent == 0:
             maxEval = float('-inf')
             actionList = gameState.getLegalActions(agent)
@@ -162,7 +162,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                     bestAction = action
 
             return (maxEval, bestAction)
-        # ghosts are min player
+        # ghosts are minimizers
         else:
             minEval = float('inf')
             actionList = gameState.getLegalActions(agent)
@@ -222,7 +222,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         if (gameState.isWin() or gameState.isLose() or depth == 0):
             return (self.evaluationFunction(gameState),)
 
-        # pacman is max player
+        # pacman is maximazer
         if agent == 0:
             maxEval = float('-inf')
             actionList = gameState.getLegalActions(agent)
@@ -241,7 +241,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     break
 
             return (maxEval, bestAction)
-        # ghosts are min player
+        # ghosts are minimizers
         else:
             minEval = float('inf')
             actionList = gameState.getLegalActions(agent)
