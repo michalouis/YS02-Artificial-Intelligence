@@ -76,20 +76,25 @@ class ReflexAgent(Agent):
 
         "*** YOUR CODE HERE ***"
 
+        # food score
         foodList = newFood.asList()
-        closestGhostScore = 0
         
+        # if there is no food left game has ended
         if not foodList:
             return successorGameState.getScore()
 
         foodDistance = [manhattanDistance(newPos, food) for food in foodList]
 
+        # increase score based on how close the food is
         if foodDistance:
             closestFoodScore = 1/float(min(foodDistance))
             furthestFoodScore = 1/float(max(foodDistance))
 
+        # ghost score
         ghostDistance = [manhattanDistance(newPos, ghost.getPosition()) for ghost in newGhostStates]
         
+        # decrease score based on how close the ghosts are
+        closestGhostScore = 0
         if ghostDistance:
             if min(ghostDistance) == 0:
                 closestGhostScore = -999
@@ -137,29 +142,32 @@ class MinimaxAgent(MultiAgentSearchAgent):
     Your minimax agent (question 2)
     """
 
-    def minmax(self, gameState: GameState, agent: int, depth: int):
+    def minimax(self, gameState: GameState, agent: int, depth: int):
 
+        # if game has ended or we have reached the end of the tree, return evaluation
         if (gameState.isWin() or gameState.isLose() or depth == 0):
             return (self.evaluationFunction(gameState),)
 
+        # pacman is max player
         if agent == 0:
             maxEval = float('-inf')
             actionList = gameState.getLegalActions(agent)
 
             for action in actionList:
                 successor = gameState.generateSuccessor(agent, action)
-                successorEval = self.minmax(successor, agent + 1, depth)
+                successorEval = self.minimax(successor, agent + 1, depth)
 
                 if successorEval[0] > maxEval:
                     maxEval = successorEval[0]
                     bestAction = action
 
             return (maxEval, bestAction)
+        # ghosts are min player
         else:
             minEval = float('inf')
             actionList = gameState.getLegalActions(agent)
 
-            if agent == gameState.getNumAgents() - 1:
+            if agent == gameState.getNumAgents() - 1:   # decrease number of agents because pacman is one of them
                 depth -= 1
                 nextAgent = 0
             else:
@@ -167,7 +175,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
             for action in actionList:
                 successor = gameState.generateSuccessor(agent, action)
-                successorEval = self.minmax(successor, nextAgent, depth)
+                successorEval = self.minimax(successor, nextAgent, depth)
 
                 if successorEval[0] < minEval:
                     minEval = successorEval[0]
@@ -200,7 +208,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
 
-        action = self.minmax(gameState, self.index, self.depth)
+        action = self.minimax(gameState, self.index, self.depth)
         return action[1]
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -208,33 +216,37 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     Your minimax agent with alpha-beta pruning (question 3)
     """
 
-    def minmax(self, gameState: GameState, agent: int, depth: int, alpha: float, beta: float):
+    def alphabeta(self, gameState: GameState, agent: int, depth: int, alpha: float, beta: float):
 
+        # if game has ended or we have reached the end of the tree, return evaluation
         if (gameState.isWin() or gameState.isLose() or depth == 0):
             return (self.evaluationFunction(gameState),)
 
+        # pacman is max player
         if agent == 0:
             maxEval = float('-inf')
             actionList = gameState.getLegalActions(agent)
 
             for action in actionList:
                 successor = gameState.generateSuccessor(agent, action)
-                successorEval = self.minmax(successor, agent + 1, depth, alpha, beta)
+                successorEval = self.alphabeta(successor, agent + 1, depth, alpha, beta)
 
                 if successorEval[0] > maxEval:
                     maxEval = successorEval[0]
                     bestAction = action
 
+                # alpha-beta pruning
                 alpha = max(alpha, successorEval[0])
-                if beta < alpha:
+                if beta < alpha:    # no <= because of autograder
                     break
 
             return (maxEval, bestAction)
+        # ghosts are min player
         else:
             minEval = float('inf')
             actionList = gameState.getLegalActions(agent)
 
-            if agent == gameState.getNumAgents() - 1:
+            if agent == gameState.getNumAgents() - 1:   # decrease number of agents because pacman is one of them
                 depth -= 1
                 nextAgent = 0
             else:
@@ -242,14 +254,15 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
             for action in actionList:
                 successor = gameState.generateSuccessor(agent, action)
-                successorEval = self.minmax(successor, nextAgent, depth, alpha, beta)
+                successorEval = self.alphabeta(successor, nextAgent, depth, alpha, beta)
 
                 if successorEval[0] < minEval:
                     minEval = successorEval[0]
                     bestAction = action
 
+                # alpha-beta pruning
                 beta = min(beta, successorEval[0])
-                if beta < alpha:
+                if beta < alpha:    # no <= because of autograder
                     break
 
             return (minEval, bestAction)
@@ -260,7 +273,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         
-        action = self.minmax(gameState, self.index, self.depth, float('-inf'), float('inf'))
+        action = self.alphabeta(gameState, self.index, self.depth, float('-inf'), float('inf'))
         return action[1]
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
@@ -286,11 +299,12 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                     bestAction = action
 
             return (maxEval, bestAction)
+        # ghosts are now random, so we find their average evaluation
         else:
             sumEval = 0
             actionList = gameState.getLegalActions(agent)
 
-            if agent == gameState.getNumAgents() - 1:
+            if agent == gameState.getNumAgents() - 1:   # decrease number of agents because pacman is one of them
                 depth -= 1
                 nextAgent = 0
             else:
