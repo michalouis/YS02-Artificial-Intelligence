@@ -171,7 +171,7 @@ def atLeastOne(literals: List[Expr]) -> Expr:
     True
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return disjoin(literals)
     "*** END YOUR CODE HERE ***"
 
 
@@ -183,7 +183,12 @@ def atMostOne(literals: List[Expr]) -> Expr:
     itertools.combinations may be useful here.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    conjunctions = [] 
+    combinations = itertools.combinations(literals,2)
+    for l1,l2 in combinations:
+        conjunctions.append(disjoin(~l1 ,~l2))
+                
+    return logic.conjoin(conjunctions)
     "*** END YOUR CODE HERE ***"
 
 
@@ -194,7 +199,7 @@ def exactlyOne(literals: List[Expr]) -> Expr:
     the expressions in the list is true.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return conjoin(atLeastOne(literals), atMostOne(literals))
     "*** END YOUR CODE HERE ***"
 
 #______________________________________________________________________________
@@ -227,7 +232,7 @@ def pacmanSuccessorAxiomSingle(x: int, y: int, time: int, walls_grid: List[List[
         return None
     
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return PropSymbolExpr(pacman_str, x, y, time=now) % disjoin(possible_causes)
     "*** END YOUR CODE HERE ***"
 
 
@@ -298,7 +303,34 @@ def pacphysicsAxioms(t: int, all_coords: List[Tuple], non_outer_wall_coords: Lis
     pacphysics_sentences = []
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # if a wall is at (x, y), then Pacman is not at (x, y) at t
+    for coord in all_coords:
+        x = coord[0]
+        y = coord[1]
+        pacphysics_sentences.append(PropSymbolExpr(wall_str, x, y) >> ~PropSymbolExpr(pacman_str, x, y, time=t))
+
+    # pacman is at exactly one of the squares at timestep t
+    pacmanPositions = []
+    for coord in non_outer_wall_coords:
+        x = coord[0]
+        y = coord[1]
+        pacmanPositions.append(PropSymbolExpr(pacman_str, x, y, time=t))
+    pacphysics_sentences.append(exactlyOne(pacmanPositions))
+
+    # pacman takes exactly one of the four actions in DIRECTIONS at timestep t
+    directions = []
+    for action in DIRECTIONS:
+        directions.append(PropSymbolExpr(action, time=t))
+    pacphysics_sentences.append(exactlyOne(directions))
+
+    # append the result of sensorAxioms
+    if sensorModel:
+        pacphysics_sentences.append(sensorModel(t, non_outer_wall_coords))
+    
+    # append the result of successorAxioms
+    if t>0:
+        if successorAxioms:
+            pacphysics_sentences.append(successorAxioms(t, walls_grid, non_outer_wall_coords))
     "*** END YOUR CODE HERE ***"
 
     return conjoin(pacphysics_sentences)
@@ -332,7 +364,27 @@ def checkLocationSatisfiability(x1_y1: Tuple[int, int], x0_y0: Tuple[int, int], 
     KB.append(conjoin(map_sent))
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Add to KB:
+
+    # pacphysics_axioms(...) with the appropriate timesteps
+    KB.append(pacphysicsAxioms(0, all_coords, non_outer_wall_coords))   # for time t = 0
+    KB.append(pacphysicsAxioms(1, all_coords, non_outer_wall_coords))   # for time t = 1
+    KB.append(allLegalSuccessorAxioms(1,walls_grid, non_outer_wall_coords))
+
+    # pacman’s current location (x0, y0)
+    KB.append(PropSymbolExpr(pacman_str, x0, y0, time=0))
+
+    # pacman takes action0
+    KB.append(PropSymbolExpr(action0, time=0))
+
+    # pacman takes action0
+    KB.append(PropSymbolExpr(action1, time=1))
+
+    pacmanLocation = PropSymbolExpr(pacman_str, x1, y1, time=1)
+    model1 = findModel(conjoin(KB) & pacmanLocation)
+    model2 = findModel(conjoin(KB) & ~pacmanLocation)
+    
+    return (model1,model2)
     "*** END YOUR CODE HERE ***"
 
 #______________________________________________________________________________
