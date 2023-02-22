@@ -444,10 +444,10 @@ def positionLogicPlan(problem) -> List:
                 KB.append(pacmanSuccessorAxiomSingle(x, y, t, walls_grid))
 
         # goal_assertion
-        goal_assertion = PropSymbolExpr(pacman_str, xg, yg, time=t)
+        goalAssertion = PropSymbolExpr(pacman_str, xg, yg, time=t)
 
         # Use findModel and pass in the Goal Assertion and KB
-        model = findModel(conjoin(KB) & goal_assertion)
+        model = findModel(conjoin(KB) & goalAssertion)
 
         # If there is, return a sequence of actions from start to goal using extractActionSequence
         if model:
