@@ -581,27 +581,27 @@ def localization(problem, agent) -> Generator:
         # Add percept info to KB
         KB.append(fourBitPerceptRules(t, agent.getPercepts()))
 
-        # checks if the results of entails contradict each other
+        # Find possible pacman locations with updated KB
         for coord in non_outer_wall_coords:
             x = coord[0]
             y = coord[1]
            
-            #Can we prove whether Pacman is at (x, y)?
+            # Can we prove whether Pacman is at (x, y)?
             # Can we prove whether Pacman is not at (x, y)?
             
             # Use entails and the KB.
-            entailment1 = entails(conjoin(KB), PropSymbolExpr(pacman_str,x, y, time=t))
-            entailment2 = entails(conjoin(KB), ~PropSymbolExpr(pacman_str,x, y, time=t))
+            entailment1 = entails(conjoin(KB), PropSymbolExpr(pacman_str, x, y, time=t))
+            entailment2 = entails(conjoin(KB), ~PropSymbolExpr(pacman_str, x, y, time=t))
           
             #If there exists a satisfying assignment where Pacman is at (x, y) at time t, add (x, y) to possible_locations.
             
             #Add to KB: (x, y) locations where Pacman is provably at, at time t. 
             if entailment1 and not entailment2:
-                KB.append(PropSymbolExpr(pacman_str,x, y, time=t))
+                KB.append(PropSymbolExpr(pacman_str, x, y, time=t))
                 possible_locations.append((x,y))
             #Add to KB: (x, y) locations where Pacman is provably not at, at time t.
             elif not entailment1 and entailment2:
-                KB.append(~PropSymbolExpr(pacman_str,x, y, time=t))
+                KB.append(~PropSymbolExpr(pacman_str, x, y, time=t))
             elif not entailment1 and not entailment2:
                 possible_locations.append((x,y))
 
@@ -635,9 +635,48 @@ def mapping(problem, agent) -> Generator:
     KB.append(conjoin(outer_wall_sent))
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    walls_grid = problem.walls  # from q6
+
+    #Get initial location (pac_x_0, pac_y_0) of Pacman, and add this to KB
+    intialLocation = PropSymbolExpr(pacman_str, pac_x_0, pac_y_0, time = 0)
+    KB.append(intialLocation)
+
+    # Also add whether there is a wall at that location
+    KB.append(PropSymbolExpr(pacman_str, pac_x_0, pac_x_0, time=0) >> ~PropSymbolExpr(wall_str, pac_x_0, pac_y_0))
 
     for t in range(agent.num_timesteps):
+        # Add pacphysics info to KB
+        KB.append(pacphysicsAxioms(t,all_coords, non_outer_wall_coords, walls_grid, sensorAxioms, allLegalSuccessorAxioms))
+
+        # Add action info to KB
+        KB.append(PropSymbolExpr(agent.actions[t], time=t))
+
+        # Add percept info to KB
+        KB.append(fourBitPerceptRules(t, agent.getPercepts()))
+
+        # Find provable wall locations with updated KB
+        for coord in non_outer_wall_coords:
+            x = coord[0]
+            y = coord[1]
+           
+            # Can we prove whether a wall is at (x, y)?
+            # Can we prove whether a wall is not at (x, y)?
+            
+            # Use entails and the KB.
+            entailment1 = entails(conjoin(KB), PropSymbolExpr(wall_str, x, y))
+            entailment2 = entails(conjoin(KB), ~PropSymbolExpr(wall_str, x, y))
+            
+            if entailment1 and not entailment2:
+                KB.append(PropSymbolExpr(wall_str,x, y))
+                known_map[x][y] = 1
+            elif not entailment1 and entailment2:
+                KB.append(~PropSymbolExpr(wall_str,x, y))
+                known_map[x][y] = 0
+            elif not entailment1 and not entailment2:
+                known_map[x][y] = -1
+
+        # Call agent.moveToNextState(action_t) on the current agent action at timestep t
+        agent.moveToNextState(agent.actions[t])
         "*** END YOUR CODE HERE ***"
         yield known_map
 
