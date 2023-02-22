@@ -557,9 +557,55 @@ def localization(problem, agent) -> Generator:
     KB = []
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    non_wall_coords = [loc for loc in all_coords if loc not in walls_list]  # from q5
+
+    for coord in non_wall_coords:
+        x = coord[0]
+        y = coord[1] 
+        KB.append(~PropSymbolExpr(wall_str, x, y))
+        
+    for coord in walls_list:
+        x = coord[0]
+        y = coord[1] 
+        KB.append(PropSymbolExpr(wall_str, x, y))
 
     for t in range(agent.num_timesteps):
+        possible_locations = []
+
+        # Add pacphysics info to KB
+        KB.append(pacphysicsAxioms(t,all_coords, non_outer_wall_coords, walls_grid, sensorAxioms, allLegalSuccessorAxioms))
+
+        # Add action info to KB
+        KB.append(PropSymbolExpr(agent.actions[t], time=t))
+
+        # Add percept info to KB
+        KB.append(fourBitPerceptRules(t, agent.getPercepts()))
+
+        # checks if the results of entails contradict each other
+        for coord in non_outer_wall_coords:
+            x = coord[0]
+            y = coord[1]
+           
+            #Can we prove whether Pacman is at (x, y)?
+            # Can we prove whether Pacman is not at (x, y)?
+            
+            # Use entails and the KB.
+            entailment1 = entails(conjoin(KB), PropSymbolExpr(pacman_str,x, y, time=t))
+            entailment2 = entails(conjoin(KB), ~PropSymbolExpr(pacman_str,x, y, time=t))
+          
+            #If there exists a satisfying assignment where Pacman is at (x, y) at time t, add (x, y) to possible_locations.
+            
+            #Add to KB: (x, y) locations where Pacman is provably at, at time t. 
+            if entailment1 and not entailment2:
+                KB.append(PropSymbolExpr(pacman_str,x, y, time=t))
+                possible_locations.append((x,y))
+            #Add to KB: (x, y) locations where Pacman is provably not at, at time t.
+            elif not entailment1 and entailment2:
+                KB.append(~PropSymbolExpr(pacman_str,x, y, time=t))
+            elif not entailment1 and not entailment2:
+                possible_locations.append((x,y))
+
+        agent.moveToNextState(agent.actions[t])
         "*** END YOUR CODE HERE ***"
         yield possible_locations
 
