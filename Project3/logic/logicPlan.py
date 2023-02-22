@@ -452,8 +452,6 @@ def positionLogicPlan(problem) -> List:
         # If there is, return a sequence of actions from start to goal using extractActionSequence
         if model:
             return extractActionSequence(model, actions)
-
-    return None
     "*** END YOUR CODE HERE ***"
 
 #______________________________________________________________________________
@@ -482,7 +480,65 @@ def foodLogicPlan(problem) -> List:
     KB = []
 
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Add to KB: Initial knowledge: Pacman's initial location at timestep 0
+    KB.append(PropSymbolExpr(pacman_str, x0, y0, time=0))
+
+    # Add to KB: Initialize Food[x,y]_t variables
+    for coord in food:
+        x = coord[0]
+        y = coord[1]
+        KB.append(PropSymbolExpr(food_str, x, y, time=0))
+
+    # for t in range(50) [Autograder will not test on layouts requiring ≥ 50 timesteps
+    for t in range(50):
+        possibleLocations = []
+        directions = []
+        foodLeft = []
+
+        # Print time step; this is to see that the code is running and how far it is
+        print(t)
+
+        # Add to KB: Initial knowledge: Pacman can only be at exactlyOne
+        # of the locations in non_wall_coords at timestep t
+        for coord in non_wall_coords:
+            x = coord[0]
+            y = coord[1]
+            possibleLocations.append(PropSymbolExpr(pacman_str, x, y, time=t))
+        KB.append(exactlyOne(possibleLocations))
+
+        # goal_assertion
+        for coord in food:
+            x = coord[0]
+            y = coord[1]
+            foodLeft.append(PropSymbolExpr(food_str, x, y, time=t)) # if disjoin(foodLeft) is False then pacman ate all the dots, so goal is reached
+        goalAssertion = ~disjoin(foodLeft)
+
+        # Use findModel and pass in the Goal Assertion and KB
+        model = findModel(conjoin(KB) & goalAssertion)
+
+        # If there is, return a sequence of actions from start to goal using extractActionSequence
+        if model:
+            return extractActionSequence(model, actions)
+
+        # food successor axiom
+        for coord in food:
+            x = coord[0]
+            y = coord[1]
+            #if pacman and a dot are at the same location, then at the next time step there will be no dot at that location
+            KB.append(~PropSymbolExpr(food_str, x, y, time=t+1) % disjoin((PropSymbolExpr(food_str, x, y, time=t) & PropSymbolExpr(pacman_str, x, y, time=t)) , (~PropSymbolExpr(food_str, x, y, time=t))))
+
+        # Add to KB: Pacman takes exactly one action per timestep.
+        for action in actions:
+            directions.append(PropSymbolExpr(action, time=t))
+        KB.append(exactlyOne(directions))
+
+        # Add to KB: Transition Model sentences: call pacmanSuccessorAxiomSingle(...)
+        # for all possible pacman positions in non_wall_coords
+        if t>0:
+            for coord in non_wall_coords:
+                x = coord[0]
+                y = coord[1]
+                KB.append(pacmanSuccessorAxiomSingle(x, y, t, walls))
     "*** END YOUR CODE HERE ***"
 
 #______________________________________________________________________________
